@@ -9,6 +9,8 @@ public class MyCalculator extends Frame {
     public boolean setClear = true;
     double number, memValue;
     char op;
+    char previous = '+';
+    public static boolean modified_flag = true;
 
     String digitButtonText[] = { "7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "+/-", "." };
     String operatorButtonText[] = { "/", "sqrt", "*", "%", "-", "1/X", "+", "=" };
@@ -23,7 +25,7 @@ public class MyCalculator extends Frame {
     Label displayLabel = new Label("0", Label.RIGHT);
     Label memLabel = new Label(" ", Label.RIGHT);
 
-    final int FRAME_WIDTH = 325, FRAME_HEIGHT = 325;
+    final int FRAME_WIDTH = 310, FRAME_HEIGHT = 325;
     final int HEIGHT = 30, WIDTH = 30, H_SPACE = 10, V_SPACE = 10;
     final int TOPX = 30, TOPY = 50;
     MyCalculator(String frameText)
@@ -92,6 +94,7 @@ public class MyCalculator extends Frame {
             }
         });
 
+        setBackground(new Color(112,128,144));
         setLayout(null);
         setSize(FRAME_WIDTH, FRAME_HEIGHT);
         setResizable(false);
@@ -100,252 +103,12 @@ public class MyCalculator extends Frame {
 
     static String getFormattedText(double temp) {
         String resText = "" + temp;
-        if (resText.lastIndexOf(".0") > 0)
+        if (resText.lastIndexOf(".0") == ( resText.length() -2 ) )
             resText = resText.substring(0, resText.length() - 2);
         return resText;
     }
 
     public static void main(String[] args) {
         new MyCalculator("Calculator");
-    }
-}
-
-/*******************************************/
-
-class MyDigitButton extends Button implements ActionListener {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    MyCalculator cl;
-
-    //////////////////////////////////////////  
-    MyDigitButton(int x, int y, int width, int height, String cap, MyCalculator clc) {
-        super(cap);
-        setBounds(x, y, width, height);
-        this.cl = clc;
-        this.cl.add(this);
-        addActionListener(this);
-    }
-
-    ////////////////////////////////////////////////  
-    static boolean isInString(String s, char ch) {
-        for (int i = 0; i < s.length(); i++)
-            if (s.charAt(i) == ch)
-                return true;
-        return false;
-    }
-
-    /////////////////////////////////////////////////  
-    public void actionPerformed(ActionEvent ev) {
-        String tempText = ((MyDigitButton) ev.getSource()).getLabel();
-
-        if (tempText.equals(".")) {
-            if (cl.setClear) {
-                cl.displayLabel.setText("0.");
-                cl.setClear = false;
-            } else if (!isInString(cl.displayLabel.getText(), '.'))
-                cl.displayLabel.setText(cl.displayLabel.getText() + ".");
-            return;
-        }
-
-        if(tempText.equals("+/-")){
-            cl.displayLabel.setText( "-" + cl.displayLabel.getText());
-            return;
-        }
-
-        int index = 0;
-        try {
-            index = Integer.parseInt(tempText);
-        } catch (NumberFormatException e) {
-            return;
-        }
-
-        if (index == 0 && cl.displayLabel.getText().equals("0"))
-            return;
-
-        if (cl.setClear) {
-            cl.displayLabel.setText("" + index);
-            cl.setClear = false;
-        } else
-            cl.displayLabel.setText(cl.displayLabel.getText() + index);
-    }//actionPerformed  
-}//class defination  
-
-/********************************************/
-
-class MyOperatorButton extends Button implements ActionListener {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    MyCalculator cl;
-
-    MyOperatorButton(int x, int y, int width, int height, String cap, MyCalculator clc) {
-        super(cap);
-        setBounds(x, y, width, height);
-        this.cl = clc;
-        this.cl.add(this);
-        addActionListener(this);
-    }
-
-    ///////////////////////  
-    public void actionPerformed(ActionEvent ev) {
-        String opText = ((MyOperatorButton) ev.getSource()).getLabel();
-
-        cl.setClear = true;
-        double temp = Double.parseDouble(cl.displayLabel.getText());
-
-        if (opText.equals("1/x")) {
-            try {
-                double tempd = 1 / (double) temp;
-                cl.displayLabel.setText(MyCalculator.getFormattedText(tempd));
-            } catch (ArithmeticException excp) {
-                cl.displayLabel.setText("Divide by 0.");
-            }
-            return;
-        }
-        if (opText.equals("sqrt")) {
-            try {
-                double tempd = Math.sqrt(temp);
-                cl.displayLabel.setText(MyCalculator.getFormattedText(tempd));
-            } catch (ArithmeticException excp) {
-                cl.displayLabel.setText("Divide by 0.");
-            }
-            return;
-        }
-        if (!opText.equals("=")) {
-            cl.number = temp;
-            cl.op = opText.charAt(0);
-            return;
-        }
-        // process = button pressed  
-        switch (cl.op) {
-        case '+':
-            temp += cl.number;
-            break;
-        case '-':
-            temp = cl.number - temp;
-            break;
-        case '*':
-            temp *= cl.number;
-            break;
-        case '%':
-            try {
-                temp = cl.number % temp;
-            } catch (ArithmeticException excp) {
-                cl.displayLabel.setText("Divide by 0.");
-                return;
-            }
-            break;
-        case '/':
-            try {
-                temp = cl.number / temp;
-            } catch (ArithmeticException excp) {
-                cl.displayLabel.setText("Divide by 0.");
-                return;
-            }
-            break;
-        }//switch  
-
-        cl.displayLabel.setText(MyCalculator.getFormattedText(temp));
-        //cl.number=temp;  
-    }//actionPerformed  
-}//class  
-
-/****************************************/
-
-class MyMemoryButton extends Button implements ActionListener {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    MyCalculator cl;
-
-    /////////////////////////////////  
-    MyMemoryButton(int x, int y, int width, int height, String cap, MyCalculator clc) {
-        super(cap);
-        setBounds(x, y, width, height);
-        this.cl = clc;
-        this.cl.add(this);
-        addActionListener(this);
-    }
-
-    ////////////////////////////////////////////////  
-    public void actionPerformed(ActionEvent ev) {
-        char memop = ((MyMemoryButton) ev.getSource()).getLabel().charAt(1);
-
-        cl.setClear = true;
-        //double temp = Double.parseDouble(cl.displayLabel.getText());
-
-        switch (memop) {
-        case 'C':
-            cl.memLabel.setText(" ");
-            cl.memValue = 0.0;
-            break;
-        case 'R':
-            cl.displayLabel.setText(MyCalculator.getFormattedText(cl.memValue));
-            break;
-        case 'S':
-            cl.memValue = 0.0;
-        case '+':
-            cl.memValue += Double.parseDouble(cl.displayLabel.getText());
-            if (cl.displayLabel.getText().equals("0") || cl.displayLabel.getText().equals("0.0"))
-                cl.memLabel.setText(" ");
-            else
-                cl.memLabel.setText("M");
-            break;
-        }//switch  
-    }//actionPerformed  
-}//class  
-
-/*****************************************/
-
-class MySpecialButton extends Button implements ActionListener {
-    /**
-     * 
-     */
-    private static final long serialVersionUID = 1L;
-    MyCalculator cl;
-
-    MySpecialButton(int x, int y, int width, int height, String cap, MyCalculator clc) {
-        super(cap);
-        setBounds(x, y, width, height);
-        this.cl = clc;
-        this.cl.add(this);
-        addActionListener(this);
-    }
-
-    //////////////////////  
-    static String backSpace(String s) {
-        String Res = "";
-        for (int i = 0; i < s.length() - 1; i++)
-            Res += s.charAt(i);
-        return Res;
-    }
-
-
-    public void actionPerformed(ActionEvent ev) {
-        String opText = ((MySpecialButton) ev.getSource()).getLabel();
-        //check for backspace button  
-        if (opText.equals("Backspc")) {
-            String tempText = backSpace(cl.displayLabel.getText());
-            if (tempText.equals(""))
-                cl.displayLabel.setText("0");
-            else
-                cl.displayLabel.setText(tempText);
-            return;
-        }
-        //check for "C" button i.e. Reset  
-        if (opText.equals("C")) {
-            cl.number = 0.0;
-            cl.op = ' ';
-            cl.memValue = 0.0;
-            cl.memLabel.setText(" ");
-        }
-
-        //it must be CE button pressed  
-        cl.displayLabel.setText("0");
-        cl.setClear = true;
     }
 }
