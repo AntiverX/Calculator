@@ -3,13 +3,13 @@ package main;
 import java.awt.Button;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigDecimal;
 import java.util.logging.Logger;
 
 class MyOperatorButton extends Button implements ActionListener {
 	
-	static String strClassName = MyOperatorButton.class.getName();  
-    static Logger logger = Logger.getLogger(strClassName);
-	
+	static String strClassName = MyOperatorButton.class.getName();
+    
     private static final long serialVersionUID = 1L;
     MyCalculator cl;
     public static boolean flag;
@@ -27,23 +27,27 @@ class MyOperatorButton extends Button implements ActionListener {
 
         cl.setClear = true;
         double temp = Double.parseDouble(cl.displayLabel.getText());
-
-        if (opText.equals("1/x")) {
+        
+        if (opText.equals("1/X")) {
             try {
-                double tempd = 1 / (double) temp;
-                cl.displayLabel.setText(MyCalculator.getFormattedText(tempd));logger.info("trigered!");
+                cl.number = 1 / (double) temp;
+                cl.displayLabel.setText(MyCalculator.getFormattedText(cl.number));
+                
             } catch (ArithmeticException excp) {
                 cl.displayLabel.setText("Divide by 0.");
+                
             }
+            MyCalculator.modified_flag = false;
             return;
         }
         if (opText.equals("sqrt")) {
             try {
-                double tempd = Math.sqrt(temp);
-                cl.displayLabel.setText(MyCalculator.getFormattedText(tempd));
+            	cl.number = Math.sqrt(temp);
+                cl.displayLabel.setText(MyCalculator.getFormattedText(cl.number));
             } catch (ArithmeticException excp) {
                 cl.displayLabel.setText("Divide by 0.");
             }
+            MyCalculator.modified_flag = false;
             return;
         }
         
@@ -95,6 +99,7 @@ class MyOperatorButton extends Button implements ActionListener {
         cl.op = opText.charAt(0);
         if(MyCalculator.modified_flag != false) {
             switch(cl.previous) {
+            
             case '=':
             	cl.number = temp;
             	break;
@@ -109,17 +114,27 @@ class MyOperatorButton extends Button implements ActionListener {
               break;
             case '%':
               try {
-            	  cl.number = temp % cl.number;
+            	  if(cl.number == (int)cl.number && temp == (int)temp) {
+            		  cl.number = cl.number % temp;
+            		  System.out.println("passed!");
+            	  }
+            	  else {
+            		  cl.displayLabel.setText("Please input integer!");
+            		  cl.previous = cl.op;
+            		  return;
+            	  }
               } catch (ArithmeticException excp) {
                   cl.displayLabel.setText("Divide by 0.");
+                  cl.previous = cl.op;
                   return;
               }
               break;
           	case '/':
               try {
-            	  cl.number = cl.number / temp;flag = false;
+            	  cl.number = cl.number / temp;
               } catch (ArithmeticException excp) {
                   cl.displayLabel.setText("Divide by 0.");
+                  cl.previous = cl.op;
                   return;
               }
               break;
@@ -127,9 +142,13 @@ class MyOperatorButton extends Button implements ActionListener {
         }
 
         cl.previous = cl.op;
-        //logger.info(Double.toString(cl.number));
-        cl.displayLabel.setText(MyCalculator.getFormattedText(cl.number));
-        //cl.displayLabel.setText(Double.toString(cl.number));
+        
+        BigDecimal b = new BigDecimal(cl.number);  
+        double f1 = b.setScale(9,   BigDecimal.ROUND_HALF_UP).doubleValue();
+        
+        cl.displayLabel.setText(MyCalculator.getFormattedText(f1));
+        //cl.displayLabel.setText(MyCalculator.getFormattedText(cl.number));
+
         MyCalculator.modified_flag = false;
     }
 } 

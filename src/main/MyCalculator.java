@@ -2,19 +2,19 @@ package main;
 
 import java.awt.*;
 import java.awt.event.*;
-
+import java.math.BigDecimal;
 public class MyCalculator extends Frame {
 
     private static final long serialVersionUID = 1L;
     public boolean setClear = true;
-    double number, memValue;
+    double number,memValue;
     char op;
     char previous = '+';
     public static boolean modified_flag = true;
 
     String digitButtonText[] = { "7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "+/-", "." };
     String operatorButtonText[] = { "/", "sqrt", "*", "%", "-", "1/X", "+", "=" };
-    String memoryButtonText[] = { "MC", "MR", "MS", "M+" };
+    String memoryButtonText[] = { "MC", "MR", "M-", "M+" };
     String specialButtonText[] = { "Backspc", "C", "CE" };
 
     MyDigitButton digitButton[] = new MyDigitButton[digitButtonText.length];

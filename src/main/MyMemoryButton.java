@@ -28,8 +28,9 @@ class MyMemoryButton extends Button implements ActionListener {
         case 'R':
             cl.displayLabel.setText(MyCalculator.getFormattedText(cl.memValue));
             break;
-        case 'S':
-            cl.memValue = 0.0;
+        case '-':
+            cl.memValue -= Double.parseDouble(cl.displayLabel.getText());
+            break;
         case '+':
             cl.memValue += Double.parseDouble(cl.displayLabel.getText());
             if (cl.displayLabel.getText().equals("0") || cl.displayLabel.getText().equals("0.0"))
