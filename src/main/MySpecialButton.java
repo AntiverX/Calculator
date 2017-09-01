@@ -37,6 +37,7 @@ class MySpecialButton extends Button implements ActionListener {
         //check for "C" button i.e. Reset  
         if (opText.equals("C")) {
             cl.number = 0.0;
+            cl.previous = '+';
             cl.op = ' ';
             cl.memValue = 0.0;
             cl.memLabel.setText(" ");

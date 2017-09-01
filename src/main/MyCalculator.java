@@ -2,7 +2,6 @@ package main;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.math.BigDecimal;
 public class MyCalculator extends Frame {
 
     private static final long serialVersionUID = 1L;

@@ -4,7 +4,7 @@ import java.awt.Button;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
-import java.util.logging.Logger;
+
 
 class MyOperatorButton extends Button implements ActionListener {
 	
